@@ -1,4 +1,4 @@
-import { processChatMessage } from '../server/gemini'
+import { processChatMessage } from '../server/gemini.js'
 
 export default async function handler(request: Request): Promise<Response> {
   if (request.method !== 'POST') {
