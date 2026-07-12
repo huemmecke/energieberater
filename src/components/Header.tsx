@@ -77,7 +77,7 @@ export function Header() {
 
           <button
             type="button"
-            className="flex h-10 w-10 items-center justify-center rounded lg:hidden"
+            className="flex h-10 w-10 items-center justify-center border-0 bg-transparent p-0 outline-none lg:hidden"
             aria-label={menuOpen ? 'Menü schließen' : 'Menü öffnen'}
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
@@ -116,7 +116,7 @@ export function Header() {
             <span className="text-sm font-light text-ewe-navy">Navigation</span>
             <button
               type="button"
-              className="flex h-9 w-9 items-center justify-center rounded"
+              className="flex h-9 w-9 items-center justify-center border-0 bg-transparent p-0 outline-none"
               aria-label="Menü schließen"
               onClick={closeMenu}
             >
