@@ -1,8 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { config } from 'dotenv'
-import { legalUpdates } from '../src/data/legalUpdates.ts'
-import { brand } from '../src/design/brand.ts'
+import { buildSystemPrompt } from './prompt.js'
 
 config({ path: '.env.local' })
 config()
@@ -18,31 +17,7 @@ const GENERATION_CONFIG = {
   thinkingConfig: { thinkingBudget: 0 },
 } as const
 
-const SYSTEM_PROMPT = `Du bist der KI-Berater von "${brand.name}" (${brand.contact.person}, Energieberater in Soest).
-
-GESPRÄCHSFÜHRUNG:
-- Führe ein kurzes Erstgespräch: Frage zuerst, worum es dem Kunden geht.
-- Stelle pro Antwort maximal EINE klare Rückfrage.
-- Antworte kurz: maximal 2–3 Sätze, keine langen Aufzählungen.
-- Erst nachdem das Anliegen klar ist, gib eine knappe Orientierung.
-
-FORMULAR-HINWEIS:
-Wenn der Kunde konkretes Beratungsbedürfnis zeigt, verweise freundlich auf die Checkliste unter /checkliste.html.
-
-Rechtsstand ${legalUpdates.stand} (nur bei Bedarf kurz erwähnen):
-- GModG: 65%-EE-Pflicht entfällt, Biotreppe ab 2029, Inkrafttreten ${legalUpdates.gmodg.inkrafttreten}
-- KfW ab ${legalUpdates.kfw.datum}: Sozialbonus 40% (<30k€), Kinderfreibetrag 10k€, Höchstbetrag 28k€
-
-Keine Rechtsberatung. Ersetzt keine dena-zertifizierte Energieberatung.
-
-ANTWORTFORMAT (zwingend, ohne Markdown):
-Antworte ausschließlich als gültiges JSON-Objekt:
-{"reply":"Sichtbare Chat-Antwort mit genau einer Rückfrage","quickReplies":["Option 1","Option 2","Option 3","Option 4"]}
-
-quickReplies-Regeln:
-- Genau 3–4 kurze Button-Texte (max. 35 Zeichen)
-- Beantworten direkt die Rückfrage in "reply"
-- Konkrete, klickbare Antworten – keine ganzen Sätze, keine Fragen als Buttons`
+const SYSTEM_PROMPT = buildSystemPrompt()
 
 export type ChatHistoryItem = { role: string; content: string }
 

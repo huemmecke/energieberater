@@ -1,0 +1,21 @@
+# Referenzmaterial – nicht für Build/Deploy nötig
+input/
+
+# Lokale Artefakte
+node_modules/
+dist/
+.git/
+
+# Große, ungenutzte Bilder (nur 3 Hero-Slides + Carsten-Foto werden importiert)
+assets/img/james-kovin-NB5COl4w_PU-unsplash.jpg
+assets/img/pexels-lisa-fotios-3632818.jpg
+assets/img/pexels-pixabay-280221.jpg
+assets/img/pexels-pixabay-434634.jpg
+assets/img/portrait-2_385.jpg
+assets/img/tim-schmidbauer-yo99VMp2iYM-unsplash.jpg
+assets/img/xavier-senente-o-n5SF-1q60-unsplash.jpg
+assets/img/20190725_COMPARE_Warming_stripes_-_N_vs_S_northern_1880-2018_(ref_1901-2000).jpg
+
+# PDFs
+assets/ewe_logo_light_landscape.pdf
+public/assets/ewe_logo_light_landscape.pdf
