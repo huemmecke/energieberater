@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/berater", "destination": "/berater.html" },
+    { "source": "/checkliste", "destination": "/checkliste.html" }
+  ]
+}

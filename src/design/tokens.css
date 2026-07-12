@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ewe-navy: #1c2f76;
+  --color-ewe-navy-dark: #15245d;
+  --color-ewe-navy-light: #2a4494;
+  --color-ewe-off-white: #fafbfc;
+  --color-ewe-muted: #4a5568;
+  --font-biorhyme: "BioRhyme", Georgia, serif;
+  --spacing-stripe: 0.75rem;
+}
