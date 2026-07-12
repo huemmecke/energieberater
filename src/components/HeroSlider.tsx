@@ -66,7 +66,7 @@ export function HeroSlider() {
               i === active ? 'opacity-100' : 'opacity-0'
             }`}
             style={{
-              backgroundImage: `linear-gradient(to bottom, rgba(28,47,118,0.15), rgba(28,47,118,0.5)), url(${s.image})`,
+              backgroundImage: `linear-gradient(to bottom, rgba(28,47,118,0.15), rgba(28,47,118,0.5)), url("${s.image}")`,
             }}
             aria-hidden={i !== active}
           />

@@ -1,6 +1,6 @@
 import imgHouses from '../../assets/img/dr-ina-melny-p-ArjNg6NG8-unsplash.jpg'
-import imgCabin from '../../assets/img/gabriel-kiener-2ykC08BI47Q-unsplash (1).jpg'
-import imgWater from '../../assets/img/prosha-amiri-l8WcW7wl7T0-unsplash (1).jpg'
+import imgCabin from '../../assets/img/hero-slide-forest-cabin.jpg'
+import imgWater from '../../assets/img/hero-slide-water-houses.jpg'
 
 export type SlideAlign = 'center' | 'bottom-center' | 'bottom-right' | 'top-right'
 
