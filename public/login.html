@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+    <title>Zugang – die energieweiser</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=BioRhyme:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 1.5rem;
+        font-family: "BioRhyme", Georgia, serif;
+        background: linear-gradient(160deg, #15245d 0%, #1c2f76 45%, #2a4494 100%);
+        color: #fafbfc;
+      }
+
+      .card {
+        width: min(100%, 26rem);
+        padding: 2rem;
+        border-radius: 1rem;
+        background: rgba(250, 251, 252, 0.08);
+        border: 1px solid rgba(250, 251, 252, 0.18);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
+      }
+
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: 1.75rem;
+        font-weight: 300;
+        line-height: 1.2;
+      }
+
+      p {
+        margin: 0 0 1.5rem;
+        color: rgba(250, 251, 252, 0.78);
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      input {
+        width: 100%;
+        padding: 0.85rem 1rem;
+        border: 1px solid rgba(250, 251, 252, 0.25);
+        border-radius: 0.5rem;
+        background: rgba(250, 251, 252, 0.95);
+        color: #1c2f76;
+        font: inherit;
+      }
+
+      input:focus {
+        outline: 2px solid rgba(250, 251, 252, 0.6);
+        outline-offset: 2px;
+      }
+
+      button {
+        width: 100%;
+        margin-top: 1rem;
+        padding: 0.9rem 1rem;
+        border: 0;
+        border-radius: 0.5rem;
+        background: #fafbfc;
+        color: #1c2f76;
+        font: inherit;
+        font-weight: 400;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #eef1f6;
+      }
+
+      button:disabled {
+        opacity: 0.7;
+        cursor: wait;
+      }
+
+      .error {
+        display: none;
+        margin-top: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        background: rgba(220, 38, 38, 0.18);
+        border: 1px solid rgba(248, 113, 113, 0.45);
+        color: #fecaca;
+        font-size: 0.9rem;
+      }
+
+      .error.visible {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>die energieweiser</h1>
+      <p>Diese Vorschau ist passwortgeschützt. Bitte Passwort eingeben, um fortzufahren.</p>
+      <form id="login-form">
+        <label for="password">Passwort</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required />
+        <button type="submit" id="submit">Zugang freischalten</button>
+      </form>
+      <p class="error" id="error" role="alert">Falsches Passwort. Bitte erneut versuchen.</p>
+    </main>
+    <script>
+      const form = document.getElementById('login-form')
+      const passwordInput = document.getElementById('password')
+      const submitButton = document.getElementById('submit')
+      const errorBox = document.getElementById('error')
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault()
+        errorBox.classList.remove('visible')
+        submitButton.disabled = true
+
+        try {
+          const response = await fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: passwordInput.value }),
+          })
+
+          if (!response.ok) {
+            errorBox.classList.add('visible')
+            passwordInput.focus()
+            return
+          }
+
+          const next = new URLSearchParams(window.location.search).get('next') || '/'
+          window.location.href = next
+        } catch {
+          errorBox.textContent = 'Verbindungsfehler. Bitte erneut versuchen.'
+          errorBox.classList.add('visible')
+        } finally {
+          submitButton.disabled = false
+        }
+      })
+
+      passwordInput.focus()
+    </script>
+  </body>
+</html>

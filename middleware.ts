@@ -1,44 +1,53 @@
-const REALM = 'die energieweiser – Vorschau';
+const SESSION_COOKIE = 'ew_session';
+const PUBLIC_PATHS = new Set(['/login', '/login.html', '/api/auth']);
 
-function validateBasicAuth(
-  authHeader: string | null,
-  expectedUser: string,
-  expectedPassword: string,
-): boolean {
-  if (!authHeader?.startsWith('Basic ')) return false;
-
-  try {
-    const decoded = atob(authHeader.slice(6));
-    const colon = decoded.indexOf(':');
-    if (colon === -1) return false;
-
-    const user = decoded.slice(0, colon);
-    const password = decoded.slice(colon + 1);
-    return user === expectedUser && password === expectedPassword;
-  } catch {
-    return false;
-  }
+async function createSessionToken(password: string): Promise<string> {
+  const encoded = new TextEncoder().encode(`energieweiser:${password}`)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', encoded)
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('')
 }
 
-export default function middleware(request: Request) {
-  const password = process.env.SITE_PASSWORD;
-  if (!password) return;
+function getCookie(request: Request, name: string): string | undefined {
+  const cookieHeader = request.headers.get('cookie')
+  if (!cookieHeader) return undefined
 
-  const username = process.env.SITE_USERNAME ?? 'preview';
-
-  if (validateBasicAuth(request.headers.get('authorization'), username, password)) {
-    return;
+  for (const part of cookieHeader.split(';')) {
+    const [key, ...valueParts] = part.trim().split('=')
+    if (key === name) return valueParts.join('=')
   }
 
-  return new Response('Zugang nur mit Passwort.', {
-    status: 401,
-    headers: {
-      'WWW-Authenticate': `Basic realm="${REALM}", charset="UTF-8"`,
-      'X-Robots-Tag': 'noindex, nofollow, noarchive, nosnippet',
-    },
-  });
+  return undefined
+}
+
+function loginRedirect(request: Request): Response {
+  const url = new URL(request.url)
+  const next = `${url.pathname}${url.search}`
+  const loginUrl = new URL('/login.html', request.url)
+
+  if (next && next !== '/' && next !== '/login' && next !== '/login.html') {
+    loginUrl.searchParams.set('next', next)
+  }
+
+  return Response.redirect(loginUrl, 302)
+}
+
+export default async function middleware(request: Request) {
+  const password = process.env.SITE_PASSWORD
+  if (!password) return
+
+  const { pathname } = new URL(request.url)
+  if (PUBLIC_PATHS.has(pathname)) return
+
+  const expectedToken = await createSessionToken(password)
+  const session = getCookie(request, SESSION_COOKIE)
+
+  if (session === expectedToken) return
+
+  return loginRedirect(request)
 }
 
 export const config = {
   matcher: ['/:path*'],
-};
+}
