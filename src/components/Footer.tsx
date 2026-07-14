@@ -13,7 +13,7 @@ export function Footer() {
               <img
                 src={logo}
                 alt={brand.name}
-                className="mb-4 h-10 brightness-0 invert"
+                className="mb-4 h-12 brightness-0 invert sm:h-14"
               />
               <p className="text-sm font-normal leading-relaxed text-white/80">
                 {brand.description}

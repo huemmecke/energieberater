@@ -60,7 +60,7 @@ export function Header() {
       <header className="sticky top-0 z-50 border-b border-ewe-navy/10 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-10 lg:py-5">
           <a href={routes.home} className="shrink-0">
-            <img src={logo} alt="die energieweiser" className="h-8 w-auto sm:h-9 lg:h-10" />
+            <img src={logo} alt="die energieweiser" className="h-10 w-auto sm:h-12 lg:h-14" />
           </a>
 
           <nav className="hidden items-center gap-x-8 lg:flex" aria-label="Hauptnavigation">
