@@ -4,5 +4,16 @@
   "rewrites": [
     { "source": "/berater", "destination": "/berater.html" },
     { "source": "/checkliste", "destination": "/checkliste.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive, nosnippet"
+        }
+      ]
+    }
   ]
 }
