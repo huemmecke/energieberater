@@ -28,7 +28,7 @@ export function LegalUpdates() {
             </p>
             <ul className="space-y-4">
               {gmodg.punkte.map((punkt) => (
-                <li key={punkt.label} className="border-l-2 border-ewe-navy pl-4">
+                <li key={punkt.label}>
                   <p className="font-bold text-ewe-navy">{punkt.label}</p>
                   <p className="mt-1 text-sm font-normal text-ewe-muted">{punkt.text}</p>
                 </li>
