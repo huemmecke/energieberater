@@ -22,29 +22,31 @@ export function SectionHeading({
   return (
     <div className={`mb-10 ${alignClass}`}>
       <div
-        className={`flex items-center gap-3 sm:gap-4 ${
+        className={`flex items-start gap-3 sm:gap-4 ${
           align === 'center' ? 'justify-center' : ''
         }`}
       >
         {withIcon && (
           <ArrowBullet
             size="heading"
-            className={light ? 'brightness-0 invert' : ''}
+            className={`mt-1 ${light ? 'brightness-0 invert' : ''}`}
           />
         )}
-        <h2 className={`text-2xl font-light sm:text-3xl lg:text-4xl ${titleColor}`}>
-          {title}
-        </h2>
+        <div className={align === 'center' ? 'text-center' : 'text-left'}>
+          <h2 className={`text-2xl font-light sm:text-3xl lg:text-4xl ${titleColor}`}>
+            {title}
+          </h2>
+          {subtitle && (
+            <p
+              className={`mt-4 max-w-2xl text-base font-normal leading-relaxed ${subtitleColor} ${
+                align === 'center' ? 'mx-auto' : ''
+              }`}
+            >
+              {subtitle}
+            </p>
+          )}
+        </div>
       </div>
-      {subtitle && (
-        <p
-          className={`mx-auto mt-4 max-w-2xl text-base font-normal leading-relaxed ${subtitleColor} ${
-            align === 'center' ? '' : 'mx-0'
-          }`}
-        >
-          {subtitle}
-        </p>
-      )}
     </div>
   )
 }

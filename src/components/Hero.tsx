@@ -30,7 +30,7 @@ export function Hero() {
               href="#berater"
               className="rounded bg-white px-6 py-3 font-bold text-ewe-navy transition-colors hover:bg-white/90"
             >
-              KI-Berater starten
+              Online-Berater starten
             </a>
             <a
               href="#kontakt"

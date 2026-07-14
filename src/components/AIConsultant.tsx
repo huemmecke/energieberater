@@ -186,17 +186,26 @@ export function AIConsultant({ variant = 'page' }: { variant?: 'page' }) {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <SectionHeading
           withIcon
-          title="KI-Energieberater"
+          title="Online-Berater"
           subtitle="Kurzes Erstgespräch – danach Orientierung zu Gesetzen, Förderung und Sanierung."
           align="left"
         />
+
+        <div className="mb-8 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-normal leading-relaxed text-amber-950">
+          <p className="font-bold">Wichtiger Hinweis</p>
+          <p className="mt-1">
+            Der Online-Berater ersetzt keine verbindliche Energieberatung, sondern dient
+            ausschließlich der Orientierung. Für eine fachlich fundierte Einschätzung
+            vereinbaren Sie bitte ein persönliches Beratungsgespräch mit uns.
+          </p>
+        </div>
 
         <div className="w-full">
           <div className="flex flex-col overflow-hidden rounded border border-ewe-navy/10 bg-white shadow-sm">
             <div className="flex items-center gap-3 border-b border-ewe-navy/10 bg-ewe-navy px-5 py-4">
               <ArrowBullet size="lg" className="brightness-0 invert" />
               <div className="flex-1">
-                <p className="font-bold text-white">Energieweiser KI-Berater</p>
+                <p className="font-bold text-white">Energieweiser Online-Berater</p>
                 <p className="text-xs font-normal text-white/60">Kurz &amp; dialogorientiert</p>
               </div>
               <label className="flex items-center gap-2 text-xs text-white/80">

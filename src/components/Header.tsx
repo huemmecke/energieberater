@@ -5,7 +5,7 @@ import { ArrowBullet } from './ui/ArrowBullet'
 
 const navItems = [
   { href: routes.home, label: 'Home' },
-  { href: routes.berater, label: 'KI-Berater' },
+  { href: routes.berater, label: 'Online-Berater' },
   { href: routes.checkliste, label: 'Checkliste' },
   { href: routes.about, label: 'Über uns' },
   { href: routes.kontakt, label: 'Kontakt' },

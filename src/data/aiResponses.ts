@@ -47,7 +47,7 @@ export const aiResponses: ResponseRule[] = [
   },
 ]
 
-export const WELCOME_MESSAGE = `Hallo! Ich bin der KI-Berater von ${brand.name}. Geht es um Heizungstausch, Sanierung, Förderung oder eine Frage zum GModG?`
+export const WELCOME_MESSAGE = `Hallo! Ich bin der Online-Berater von ${brand.name}. Geht es um Heizungstausch, Sanierung, Förderung oder eine Frage zum GModG?`
 
 export const FORM_HINT_KEYWORDS = [
   'heizung', 'sanier', 'förder', 'foerder', 'wärmepumpe', 'waermepumpe',

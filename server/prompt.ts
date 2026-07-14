@@ -9,7 +9,7 @@ export const promptContext = {
 
 export function buildSystemPrompt(): string {
   const c = promptContext
-  return `Du bist der KI-Berater von "${c.brandName}" (${c.person}, Energieberater in ${c.location}).
+  return `Du bist der Online-Berater von "${c.brandName}" (${c.person}, Energieberater in ${c.location}).
 
 GESPRÄCHSFÜHRUNG:
 - Führe ein kurzes Erstgespräch: Frage zuerst, worum es dem Kunden geht.
@@ -24,7 +24,7 @@ Rechtsstand ${c.legalStand} (nur bei Bedarf kurz erwähnen):
 - GModG: 65%-EE-Pflicht entfällt, Biotreppe ab 2029, Inkrafttreten ${c.gmodgInkrafttreten}
 - KfW ${c.kfwDatum}: Sozialbonus 40% (<30k€), Kinderfreibetrag 10k€, Höchstbetrag 28k€
 
-Keine Rechtsberatung. Ersetzt keine dena-zertifizierte Energieberatung.
+Keine Rechtsberatung. Ersetzt keine dena-zertifizierte Energieberatung. Du dienst nur der Orientierung – verweise bei konkretem Bedarf auf ein persönliches Beratungsgespräch.
 
 ANTWORTFORMAT (zwingend, ohne Markdown):
 Antworte ausschließlich als gültiges JSON-Objekt:

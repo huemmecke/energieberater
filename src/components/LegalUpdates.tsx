@@ -17,9 +17,9 @@ export function LegalUpdates() {
 
         <div className="grid gap-8 lg:grid-cols-2">
           <Card accent="navy">
-            <div className="mb-4 flex items-start justify-between gap-4">
+            <div className="mb-4 space-y-3">
               <h3 className="text-xl font-light text-ewe-navy">{gmodg.title}</h3>
-              <span className="shrink-0 rounded bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">
+              <span className="inline-block max-w-full rounded bg-emerald-100 px-3 py-1.5 text-xs font-bold leading-snug text-emerald-800">
                 {gmodg.status}
               </span>
             </div>
