@@ -868,6 +868,197 @@ export const LIKELIHOOD_LABEL: Record<ProgramMatch['likelihood'], string> = {
   alternative: 'Alternative',
 }
 
+export type FinderFazit = {
+  title: string
+  lead: string
+  why: string[]
+  sums: string[]
+  tease: string
+}
+
+function formatEuro(n: number): string {
+  return n.toLocaleString('de-DE') + ' €'
+}
+
+function heizungZuschussMax(answers: FinderAnswers, expertMode: boolean): number | null {
+  const selbst = answers.nutzung === 'selbst'
+  const klima =
+    selbst &&
+    (answers.alteHeizung === 'oel' ||
+      answers.alteHeizung === 'gas20' ||
+      answers.alteHeizung === 'gasEtage')
+  const eink = effectiveIncomeForSozialbonus(answers.einkommen, answers.kinder)
+  let sozial = 0
+  if (selbst) {
+    if (eink === 'bis30') sozial = 40
+    else if (eink === 'bis40') sozial = 30
+    else if (eink === 'bis50') sozial = 10
+  }
+  let pct = 30 + (klima ? 16 : 0) + sozial
+  if (expertMode && answers.neueHeizung === 'wp' && answers.wpHerkunft === 'ausserhalb') {
+    pct = Math.max(0, pct - 15)
+  }
+  pct = Math.min(pct, selbst ? 80 : 30)
+  const basisKosten =
+    answers.we === '2' ? 43000 : answers.we === '3plus' ? 58000 : 28000
+  return Math.round((basisKosten * pct) / 100)
+}
+
+function bafaZuschussMax(answers: FinderAnswers): number | null {
+  const mitIsfp = answers.isfp === 'ja' || answers.isfp === 'offen'
+  const we1 = mitIsfp ? 60000 : 30000
+  if (mitIsfp && answers.investition === 'ueber30') {
+    // 15% auf 30k + 20% auf Rest bis we1
+    return Math.round(30000 * 0.15 + (we1 - 30000) * 0.2)
+  }
+  if (mitIsfp) {
+    // konservativ: 15% auf 30k (bis zur Schwelle)
+    return Math.round(30000 * 0.15)
+  }
+  return Math.round(we1 * 0.15)
+}
+
+/** Neugierig machendes Fazit über den Programmkarten. */
+export function buildFazit(
+  answers: FinderAnswers,
+  matches: ProgramMatch[],
+  expertMode = false,
+): FinderFazit {
+  const top = matches.filter((m) => !m.id.includes('hinweis') && m.id !== 'orientierung')
+  const names = top.slice(0, 3).map((m) => m.name.split('–')[0].trim())
+  const title =
+    names.length > 0
+      ? `Ihr Fazit: ${names.join(', ')} stehen im Fokus`
+      : 'Ihr Fazit: Lassen Sie uns die Wege gemeinsam schärfen'
+
+  const vorhabenLabel =
+    answers.vorhaben === 'heizung'
+      ? 'Heizungstausch'
+      : answers.vorhaben === 'huelle'
+        ? 'Maßnahmen an der Gebäudehülle'
+        : answers.vorhaben === 'komplett'
+          ? 'eine Komplettsanierung'
+          : answers.vorhaben === 'kauf'
+            ? 'den Kauf eines sanierungsbedürftigen Altbaus'
+            : 'Ihr Sanierungsvorhaben'
+
+  const nutzungLabel =
+    answers.nutzung === 'selbst' ? 'Selbstnutzung' : 'Vermietung'
+
+  const lead = `Nach Ihren Angaben zu ${vorhabenLabel} und ${nutzungLabel} zeichnet sich ein klares Bild ab – unverbindlich, aber schon konkret genug, um neugierig zu machen.`
+
+  const why: string[] = []
+  const sums: string[] = []
+
+  const has458 = matches.some((m) => m.id === 'kfw458')
+  const hasBafa = matches.some((m) => m.id === 'bafa')
+  const has261 = matches.some((m) => m.id === 'kfw261')
+  const has308 = matches.some((m) => m.id === 'kfw308')
+  const has35c = matches.some((m) => m.id === 'para35c')
+  const hasKredit = matches.some((m) => m.id === 'kfw358' || m.id === 'kfw359' || m.id === 'kfw358-359')
+
+  if (has458) {
+    const klima =
+      answers.nutzung === 'selbst' &&
+      (answers.alteHeizung === 'oel' ||
+        answers.alteHeizung === 'gas20' ||
+        answers.alteHeizung === 'gasEtage')
+    why.push(
+      klima
+        ? 'KfW 458 passt, weil ein Heizungstausch geplant ist und Ihre Bestandsheizung den Klimageschwindigkeitsbonus (+16 %) ermöglichen kann.'
+        : 'KfW 458 passt zum geplanten Heizungstausch – die genaue Bonushöhe hängt von Selbstnutzung, Einkommen und Bestandsheizung ab.',
+    )
+    const z = heizungZuschussMax(answers, expertMode)
+    if (z != null) {
+      sums.push(
+        `Heizung (KfW 458): grob bis ca. ${formatEuro(z)} Zuschuss bei maximal förderfähigen Kosten (Orientierung, Deckel ${answers.nutzung === 'selbst' ? '80 %' : '30 %'}).`,
+      )
+    }
+  }
+
+  if (hasBafa) {
+    const mitIsfp = answers.isfp === 'ja' || answers.isfp === 'offen'
+    why.push(
+      mitIsfp
+        ? 'BAFA-Einzelmaßnahmen sind stark im Spiel: Mit iSFP steigen die Investitionsgrenzen und der Fördersatz kann über 30.000 € auf 20 % klettern.'
+        : 'BAFA-Einzelmaßnahmen an der Gebäudehülle sind unkompliziert möglich – mit iSFP oft noch attraktiver.',
+    )
+    const b = bafaZuschussMax(answers)
+    if (b != null) {
+      sums.push(
+        `Gebäudehülle (BAFA): grob bis ca. ${formatEuro(b)} Zuschuss auf die 1. Wohneinheit (je nach iSFP und Investitionshöhe).`,
+      )
+    }
+  }
+
+  if (hasKredit) {
+    why.push(
+      answers.einkommen === 'ueber90'
+        ? 'Ergänzend bietet sich KfW 359 als zinsvergünstigter Kredit bis 120.000 € je WE an.'
+        : 'Ergänzend kann ein KfW-Ergänzungskredit (358/359) bis 120.000 € je WE die Finanzierung runden.',
+    )
+    sums.push('Ergänzungskredit: bis 120.000 € je Wohneinheit (keine Zuschusssumme, sondern günstiger Kredit).')
+  }
+
+  if (has261) {
+    const wpb = isWpb(answers)
+    const tilgungBase =
+      answers.zielEh === '40ee' ? 10 : answers.zielEh === '50ee' ? 5 : answers.zielEh === '70ee' ? 0 : null
+    why.push(
+      wpb
+        ? 'KfW 261 lohnt den Blick: Bei Komplettsanierung und wahrscheinlichem WPB-Status kann der Tilgungszuschuss spürbar steigen.'
+        : 'KfW 261 kommt für eine Komplettsanierung zum Effizienzhaus infrage – Tilgung je nach Zielstandard, ggf. plus WPB-Bonus.',
+    )
+    if (tilgungBase != null) {
+      const t = tilgungBase + (wpb ? 10 : 0)
+      const betrag = Math.round((150000 * t) / 100)
+      sums.push(
+        `Komplettsanierung (KfW 261): Tilgungszuschuss ca. ${t} % → grob bis ${formatEuro(betrag)} bei max. 150.000 € förderfähigen Kosten je WE.`,
+      )
+    } else {
+      sums.push(
+        'Komplettsanierung (KfW 261): Tilgung z. B. 5–10 % (plus ggf. 10 % WPB) auf bis zu 150.000 € je WE – genaue Höhe im Termin.',
+      )
+    }
+  }
+
+  if (has308) {
+    const kids = kinderCount(answers.kinder)
+    const kredit = kids >= 3 ? 150000 : kids === 2 ? 125000 : 100000
+    why.push(
+      'KfW 308 wirkt spannend: junge Familie, Selbstnutzung und sanierungsbedürftiger Altbau – genau das Profil für den zinsgünstigen Kredit.',
+    )
+    sums.push(`Altbaukauf (KfW 308): zinsgünstiger Kredit bis ${formatEuro(kredit)} (je nach Kinderzahl).`)
+  }
+
+  if (has35c) {
+    why.push(
+      '§ 35c EStG ist eine echte Alternative, wenn Sie lieber über die Steuer steuern – 20 % über drei Jahre, aber nicht kombinierbar mit BAFA/KfW.',
+    )
+    sums.push(
+      `Steuerweg (§ 35c): bis 40.000 € Steuerermäßigung gesamt (bei max. 200.000 € Investition je WE) – Wirkung nur bei gezahlter Einkommensteuer.`,
+    )
+  }
+
+  if (why.length === 0) {
+    why.push(
+      'Aus Ihren Angaben lassen sich mehrere Wege denken – im Termin sortieren wir, was fachlich und wirtschaftlich am besten trägt.',
+    )
+  }
+
+  if (sums.length === 0) {
+    sums.push(
+      'Konkrete Euro-Beträge hängen stark von Investition, Gebäude und Bonuskombination ab – genau deshalb lohnt der persönliche Check.',
+    )
+  }
+
+  const tease = expertMode
+    ? 'Mit Ihren Expertenangaben sind wir schon nah an einer belastbaren Einschätzung. Im Termin rechnen wir Ihre Variante durch und bereiten den Antragsweg vor – oft steckt noch mehr Optimierung drin, als der Online-Finder zeigen darf.'
+    : 'Das war der Schnellcheck. Im Expertenmodus oder besser im persönlichen Termin werden aus „grob bis …“ echte Zahlen für Ihr Haus – und wir zeigen Ihnen, welcher Weg sich wirklich lohnt.'
+
+  return { title, lead, why, sums, tease }
+}
+
 /** Experten-Antworten entfernen, wenn Modus ausgeschaltet wird (verhindert hängende Pflichtfragen). */
 export function stripExpertAnswers(answers: FinderAnswers): FinderAnswers {
   const {

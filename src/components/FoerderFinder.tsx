@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import {
+  buildFazit,
   FINDER_TABS,
   getActiveQuestions,
   getQuestionIndex,
@@ -9,6 +10,7 @@ import {
   matchPrograms,
   stripExpertAnswers,
   type FinderAnswers,
+  type FinderFazit,
   type FinderTabId,
   type ProgramMatch,
 } from '../data/foerderFinder'
@@ -149,6 +151,71 @@ function AnswerSummary({ answers, expertMode }: { answers: FinderAnswers; expert
   )
 }
 
+function FazitBox({ fazit }: { fazit: FinderFazit }) {
+  return (
+    <div className="mb-8 overflow-hidden rounded-xl border-2 border-ewe-navy/15 bg-gradient-to-br from-white via-ewe-off-white to-emerald-50/40 shadow-sm">
+      <div className="border-b border-ewe-navy/10 bg-ewe-navy px-5 py-4 text-white sm:px-6">
+        <p className="text-xs font-bold uppercase tracking-wide text-white/60">Persönliches Fazit</p>
+        <h3 className="mt-1 text-xl font-light sm:text-2xl">{fazit.title}</h3>
+        <p className="mt-2 text-sm font-normal text-white/80">{fazit.lead}</p>
+      </div>
+
+      <div className="grid gap-6 p-5 sm:grid-cols-2 sm:p-6">
+        <div>
+          <p className="flex items-center gap-2 text-sm font-bold text-ewe-navy">
+            <ArrowBullet size="sm" />
+            Warum diese Wege passen
+          </p>
+          <ul className="mt-3 space-y-2.5">
+            {fazit.why.map((line) => (
+              <li key={line} className="text-sm font-normal leading-relaxed text-ewe-muted">
+                {line}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="flex items-center gap-2 text-sm font-bold text-ewe-navy">
+            <ArrowBullet size="sm" />
+            Mögliche Größenordnungen
+          </p>
+          <ul className="mt-3 space-y-2.5">
+            {fazit.sums.map((line) => (
+              <li
+                key={line}
+                className="rounded-lg border border-emerald-200/80 bg-emerald-50/80 px-3 py-2 text-sm font-normal leading-relaxed text-ewe-navy"
+              >
+                {line}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-xs font-normal italic text-ewe-muted">
+            Orientierungswerte aus unserer Wissensbasis – keine Zusage, keine Rechtsberatung.
+          </p>
+        </div>
+      </div>
+
+      <div className="border-t border-ewe-navy/10 bg-white/70 px-5 py-4 sm:px-6">
+        <p className="text-sm font-normal leading-relaxed text-ewe-navy">{fazit.tease}</p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <a
+            href={routes.kontakt}
+            className="inline-flex rounded bg-ewe-navy px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-ewe-navy-light"
+          >
+            Jetzt neugierig? Termin anfragen
+          </a>
+          <a
+            href={routes.checkliste}
+            className="inline-flex rounded border border-ewe-navy/30 px-5 py-2.5 text-sm font-bold text-ewe-navy transition-colors hover:bg-ewe-navy/5"
+          >
+            Checkliste vorbereiten
+          </a>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ResultCard({ match }: { match: ProgramMatch }) {
   return (
     <Card accent={match.accent} className="transition-transform duration-300 hover:-translate-y-0.5">
@@ -266,41 +333,18 @@ export function FoerderFinder() {
   }
 
   const matches = viewingErgebnis ? matchPrograms(answers, expertMode) : []
+  const fazit = viewingErgebnis ? buildFazit(answers, matches, expertMode) : null
   const activeTab: FinderTabId = viewingErgebnis ? 'ergebnis' : (current?.tab ?? 'vorhaben')
 
   return (
     <section id="foerderfinder" className="bg-ewe-off-white py-12 sm:py-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <SectionHeading
-            withIcon
-            title="Förderfinder"
-            subtitle="In wenigen Schritten sehen Sie, welche Programme voraussichtlich passen – spielerisch, klar und unverbindlich."
-            align="left"
-          />
-          <button
-            type="button"
-            onClick={toggleExpertMode}
-            aria-pressed={expertMode}
-            className={`shrink-0 self-start rounded-lg border-2 px-4 py-2.5 text-sm font-bold transition-all sm:self-auto ${
-              expertMode
-                ? 'border-ewe-navy bg-ewe-navy text-white shadow-md'
-                : 'border-ewe-navy/30 bg-white text-ewe-navy hover:border-ewe-navy hover:bg-ewe-navy/5'
-            }`}
-          >
-            {expertMode ? 'Expertenmodus an' : 'Expertenmodus'}
-          </button>
-        </div>
-
-        {expertMode && (
-          <div className="mb-4 rounded border border-ewe-navy/20 bg-white px-4 py-3 text-sm font-normal text-ewe-navy">
-            <p className="font-bold">Expertenmodus aktiv</p>
-            <p className="mt-1 text-ewe-muted">
-              Es werden alle steuernden Parameter abgefragt (System, Investition, EH-Ziel, WPB,
-              Technikpflichten, Steuerweg u. a.) – genauer, dafür etwas länger.
-            </p>
-          </div>
-        )}
+        <SectionHeading
+          withIcon
+          title="Förderfinder"
+          subtitle="In wenigen Schritten sehen Sie, welche Programme voraussichtlich passen – spielerisch, klar und unverbindlich."
+          align="left"
+        />
 
         <div className="mb-6 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-normal leading-relaxed text-amber-950">
           <p className="font-bold">Keine verbindliche Beratung</p>
@@ -310,6 +354,33 @@ export function FoerderFinder() {
             Steuerberatung. Ziel ist, passende Wege sichtbar zu machen – und einen Termin mit
             unserem dena-zertifizierten Energieberater zu vereinbaren.
           </p>
+        </div>
+
+        <div className="mb-3 flex items-center justify-between gap-4 rounded-lg border border-ewe-navy/15 bg-white px-4 py-3 shadow-sm">
+          <div className="min-w-0">
+            <p className="text-sm font-bold text-ewe-navy">Expertenmodus</p>
+            <p className="text-xs font-normal text-ewe-muted">
+              {expertMode
+                ? 'Alle steuernden Parameter – genauer, etwas länger.'
+                : 'Aus für den Kurzcheck. An für alle Details.'}
+            </p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={expertMode}
+            aria-label="Expertenmodus"
+            onClick={toggleExpertMode}
+            className={`relative h-8 w-14 shrink-0 rounded-full transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ewe-navy ${
+              expertMode ? 'bg-ewe-navy' : 'bg-ewe-navy/25'
+            }`}
+          >
+            <span
+              className={`absolute top-1 left-1 h-6 w-6 rounded-full bg-white shadow transition-transform duration-300 ${
+                expertMode ? 'translate-x-6' : 'translate-x-0'
+              }`}
+            />
+          </button>
         </div>
 
         <div className="overflow-hidden rounded border border-ewe-navy/10 bg-white shadow-sm">
@@ -392,17 +463,17 @@ export function FoerderFinder() {
               </div>
             )}
 
-            {viewingErgebnis && (
+            {viewingErgebnis && fazit && (
               <div className="finder-fade-in">
+                <FazitBox fazit={fazit} />
+
                 <h3 className="text-xl font-light text-ewe-navy sm:text-2xl">
-                  Voraussichtlich passende Wege
+                  Die Programme im Überblick
                 </h3>
                 <p className="mt-2 text-sm font-normal text-ewe-muted">
                   {expertMode
-                    ? 'Auswertung auf Basis aller Expertenparameter – weiterhin keine Förderzusage.'
-                    : 'Das ist eine erste Einordnung – keine Förderzusage. Für mehr Genauigkeit: Expertenmodus.'}
-                  {' '}
-                  Im Termin prüfen wir Ihre Situation verbindlich.
+                    ? 'Details zu jedem Weg – weiterhin keine Förderzusage.'
+                    : 'Details zu jedem Weg. Für feinere Zahlen: Expertenmodus oder Termin.'}
                 </p>
 
                 <div className="mt-6 grid gap-4">
@@ -412,11 +483,10 @@ export function FoerderFinder() {
                 </div>
 
                 <div className="mt-8 rounded-xl bg-ewe-navy p-6 text-white sm:p-8">
-                  <p className="text-lg font-light">Nächster Schritt: persönlicher Termin</p>
+                  <p className="text-lg font-light">Bereit für den nächsten Schritt?</p>
                   <p className="mt-2 text-sm font-normal text-white/80">
-                    Unser dena-zertifizierter Energieberater ordnet die Optionen fachlich ein,
-                    vermeidet Doppelförderung und bereitet BAFA-/KfW-Wege vor. Füllen Sie zuerst die
-                    Checkliste aus – so starten wir effizient.
+                    Unser dena-zertifizierter Energieberater macht aus dieser Orientierung eine
+                    belastbare Strategie – ohne Doppelförderung, mit dem richtigen Antragsweg.
                   </p>
                   <div className="mt-5 flex flex-wrap gap-3">
                     <a
