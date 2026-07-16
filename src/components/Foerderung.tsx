@@ -1,3 +1,4 @@
+import { routes } from '../lib/routes'
 import { Card } from './ui/Card'
 import { SectionHeading } from './ui/SectionHeading'
 
@@ -5,30 +6,30 @@ const programs = [
   {
     name: 'BAFA Einzelmaßnahmen',
     accent: 'blue' as const,
-    basis: '15 % Förderung, max. 30.000 €',
-    optimal: '20 % Förderung, max. 60.000 €',
-    hinweis: 'Mit Sanierungsfahrplan (iSFP)',
+    basis: '15 % ohne iSFP (1. WE max. 30.000 €)',
+    optimal: 'mit iSFP bis 20 % über 30.000 € (1. WE max. 60.000 €)',
+    hinweis: 'Gebäudehülle · optional iSFP',
   },
   {
     name: 'KfW 458 Heizungsförderung',
     accent: 'red' as const,
-    basis: '30 % Grundförderung',
-    optimal: 'bis 70 % mit Boni',
-    hinweis: 'Neue Konditionen ab 21.07.2026',
+    basis: '30 % Basisförderung',
+    optimal: 'bis 80 % bei Selbstnutzung (mit Boni)',
+    hinweis: 'Vermietung max. 30 %',
   },
   {
     name: 'KfW 261 Komplettsanierung',
     accent: 'green' as const,
-    basis: '10 % Basisförderung',
-    optimal: 'bis 25 % Tilgungszuschuss',
-    hinweis: 'Ziel: Effizienzhaus 70 EE',
+    basis: 'Tilgung EH 70EE 0 % / 50EE 5 % / 40EE 10 %',
+    optimal: '+10 % bei WPB',
+    hinweis: 'Max. 150.000 € je WE',
   },
   {
     name: '§35c EStG Steuerbonus',
     accent: 'amber' as const,
-    basis: '20 % über 3 Jahre',
+    basis: '20 % über 3 Jahre (7/7/6 %)',
     optimal: 'max. 40.000 € gesamt',
-    hinweis: 'Keine Doppelförderung!',
+    hinweis: 'Nicht kombinierbar mit BAFA/KfW',
   },
 ]
 
@@ -62,15 +63,16 @@ export function Foerderung() {
         </div>
 
         <div className="mt-10 rounded bg-ewe-navy p-6 text-center text-white sm:p-8">
-          <p className="text-lg font-light">Jetzt ist der richtige Zeitpunkt für eine Beratung</p>
+          <p className="text-lg font-light">Passende Förderung finden</p>
           <p className="mt-2 text-sm font-normal text-white/80">
-            Die Gesetzes- und Förderlandschaft ändert sich gerade fundamental.
+            Unser Förderberater orientiert sich ausschließlich an unserer dokumentierten
+            Wissensbasis – und führt Sie zur Checkliste und zum Beratungstermin.
           </p>
           <a
-            href="#kontakt"
+            href={routes.foerderung}
             className="mt-4 inline-block rounded bg-white px-6 py-3 font-bold text-ewe-navy transition-colors hover:bg-white/90"
           >
-            Kostenlose Erstberatung anfragen
+            Zum Förderberater
           </a>
         </div>
       </div>

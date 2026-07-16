@@ -11,6 +11,7 @@ export default defineConfig({
       input: {
         website: resolve(__dirname, 'index.html'),
         berater: resolve(__dirname, 'berater.html'),
+        foerderung: resolve(__dirname, 'foerderung.html'),
         checkliste: resolve(__dirname, 'checkliste.html'),
         ui: resolve(__dirname, 'ui.html'),
       },

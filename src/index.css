@@ -36,3 +36,18 @@ body {
   animation: kinetic-char-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
 }
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.finder-fade-in {
+  animation: fade-in-up 0.35s ease-out both;
+}

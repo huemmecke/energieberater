@@ -4,6 +4,7 @@
   "rewrites": [
     { "source": "/login", "destination": "/login.html" },
     { "source": "/berater", "destination": "/berater.html" },
+    { "source": "/foerderung", "destination": "/foerderung.html" },
     { "source": "/checkliste", "destination": "/checkliste.html" }
   ],
   "headers": [
